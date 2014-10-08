@@ -1,0 +1,27 @@
+/*
+Copyright (c) 2014 Apocalypse Laboratories.
+All rights reserved.
+Do not distribute source code without
+  express written permission.
+Website: http://apocalypselabs.net/
+Contact: admin@apocalypselabs.net
+*/
+/* 
+    Created on : Oct 3, 2014, 9:52:56 PM
+    Author     : Skylar Ittner
+*/
+
+.itemicon {
+    width:  16px;
+    height: 16px;
+}
+
+#overlay {
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+}
