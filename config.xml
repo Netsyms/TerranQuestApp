@@ -2,10 +2,11 @@
 <widget xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0" id="net.apocalypselabs.mobile.TerranQuest" version="1.0.0">
     <name>TerranQuest</name>
     <description>
-        A sample Apache Cordova application that responds to the deviceready event.
+        Bridge the gap between reality and fantasy.  
+		Real life is already like an MMO. TerranQuest just adds swords and magic.
     </description>
-    <author email="dev@cordova.apache.org" href="http://cordova.io">
-        Apache Cordova Team
+    <author email="admin@aplabs.us" href="https://apocalypselabs.net/">
+        Apocalypse Laboratories
     </author>
     <content src="index.html"/>
     <access origin="*"/>
