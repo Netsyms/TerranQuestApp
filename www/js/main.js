@@ -7,7 +7,10 @@
  * Contact: admin@apocalypselabs.net
  */
 
-var username = 'test';
+var apiurl = "http://apis.terranquest.net/";
+
+var username = '';
+var password = '';
 
 // If something is wrong
 var broken = false;
@@ -18,8 +21,6 @@ var weapon = "none";
 var magic = "sparks";
 var armor = "hoodie";
 
-// Send player location every 4 seconds.
-window.setInterval(getLocation, 4000);
 
 // Get health stats every 3 seconds.
 window.setInterval(getStats, 3000);
@@ -42,6 +43,23 @@ $('#armorModal').on('shown.bs.modal', function (e) {
     getItems('armor');
 });
 
+function gpsError(error) {
+    switch (error.code) {
+        case error.PERMISSION_DENIED:
+            alert("This app needs your location to function.  Please enable it.");
+            break;
+        case error.POSITION_UNAVAILABLE:
+            alert("Location information is unavailable.");
+            break;
+        case error.TIMEOUT:
+            alert("Cannot get location.  Reload the page and give permission.");
+            break;
+        case error.UNKNOWN_ERROR:
+            alert("An unknown error occurred.");
+            break;
+    }
+}
+
 /**
  * Get the user's location and calls sendPosition() with the data.
  * 
@@ -49,12 +67,14 @@ $('#armorModal').on('shown.bs.modal', function (e) {
  */
 
 function getLocation() {
-    //if (disable) {return;}
+    if (username === '') {
+        return;
+    }
     if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(sendPosition);
+        navigator.geolocation.getCurrentPosition(sendPosition, gpsError);
     } else {
         disable = true;
-        alert("This app will not function without location services.");
+        alert("This app will not function without location services.  Please upgrade your browser.");
     }
 }
 
@@ -65,13 +85,25 @@ function getLocation() {
  * @returns nothing
  */
 function sendPosition(position) {
-    $.get(
-            "http://terranquest.aplabs.us/api/m.php",
-            {u: username,
-                lat: position.coords.latitude,
-                long: position.coords.longitude,
-                a: 'setstatus'});
-    getPositions(position);
+    // Accuracy must be better than 10 meters (~33 feet).
+    if (position.accuracy < 10) {
+        $.get(
+                apiurl + "m.php",
+                {u: username,
+                    lat: position.coords.latitude,
+                    long: position.coords.longitude,
+                    a: 'setstatus'});
+        getPositions(position);
+    } else {
+        var content = '<li class="list-group-item">Your location isn\'t accurate enough to play this game.</li>';
+        content += '<li class="list-group-item">Your accuracy: '+position.accuracy+' meters.</li>';
+        content += '<li class="list-group-item">Required accuracy: 10 meters or less.</li>';
+        $('#playerlist').html(content);
+        $('#targetbox').html("<option>Error.  See player list.</option>");
+        $('#attackbtn').prop("disabled", true);
+        $('#magicbtn').prop("disabled", true);
+        $('#blockbtn').prop("disabled", true);
+    }
 }
 
 /**
@@ -82,7 +114,7 @@ function sendPosition(position) {
  */
 function getPositions(position) {
     $.get(
-            "http://terranquest.aplabs.us/api/m.php",
+            apiurl + "m.php",
             {lat: position.coords.latitude,
                 long: position.coords.longitude,
                 a: 'getnear'},
@@ -96,6 +128,9 @@ function getPositions(position) {
             }
             targetc += '<option>' + user + '</option>';
         }
+        $('#attackbtn').prop("disabled", false);
+        $('#magicbtn').prop("disabled", false);
+        $('#blockbtn').prop("disabled", false);
         if (content === "") {
             content = '<li class="list-group-item">Nobody else in sight...</li>';
             $('#attackbtn').prop("disabled", true);
@@ -118,8 +153,9 @@ function getPositions(position) {
  * @returns nothing
  */
 function getItems(cat) {
+    if (username !== "") {
     $.get(
-            "http://terranquest.aplabs.us/api/inventory.php",
+            apiurl + "inventory.php",
             {a: 'get',
                 u: username},
     function (data) {
@@ -133,6 +169,7 @@ function getItems(cat) {
         $('#' + cat + 'list').html(content);
     }
     );
+    }
 }
 
 /**
@@ -141,17 +178,18 @@ function getItems(cat) {
  * @returns nothing
  */
 function getStats() {
+    if (username !== "") {
     $.get(
-            "http://terranquest.aplabs.us/api/stats.php",
+            apiurl + "stats.php",
             {u: username},
     function (data) {
         var obj = JSON.parse(data);
         var hppercent = (obj['hp'] / obj['maxhp']) * 100;
         var magicpercent = (obj['magic'] / obj['maxmagic']) * 100;
-        
+
         // Is something screwy?
         if ((obj['hp'] > obj['maxhp']) || (obj['magic'] > obj['maxmagic']) || (obj['level'] < 1)) {
-            $.get("http://terranquest.aplabs.us/api/fixerr.php", {u: username}, function (data) {
+            $.get(apiurl + "fixerr.php", {u: username}, function (data) {
                 if (data === '0') {
                     alert("Heads up, some of your player stats had gone bad.  We automagically fixed them though, so no worries!");
                 } else {
@@ -170,10 +208,42 @@ function getStats() {
         }
     }
     );
+    }
+}
+
+function login() {
+    $.get(apiurl + "login.php", {donothing: true}, function (junk) {
+        var tries = 0;
+        var user = prompt("Please enter your username.");
+        var pass = prompt("Now give your password.");
+        $.post(apiurl + "login.php", {u: user, p: pass},
+        function (data) {
+            if (data === 'BAD') {
+                tries += 1;
+                if (tries < 3) {
+                    alert("Login incorrect.");
+                } else {
+                    alert("Login incorrect.  Try logging in online for more details.");
+                }
+                login();
+            } else {
+                done = true;
+                username = user;
+                password = pass;
+                if (data === 'NEW') {
+                    alert("Welcome to TerranQuest, " + username + "!  Your account has been linked successfully!");
+                }
+            }
+        }
+        );
+    });
 }
 
 $(window).bind("load", function () {
-    getLocation();
+    if (username === "") {
+        setTimeout(login, 1000);
+    }
+    window.setInterval(getLocation, 3000);
     getStats();
     setTimeout(function () {
         $('#overlay').css('display', 'none');

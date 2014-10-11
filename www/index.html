@@ -12,6 +12,13 @@ Contact: admin@apocalypselabs.net
         <title>TerranQuest</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=no;"/>
+        <meta name="mobile-web-app-capable" content="yes" />
+        <link rel="shortcut icon" href="assets/img/icon.png" sizes="512x512"/>
+        <link rel="apple-touch-icon" href="assets/img/appletouchicon60x60.png">
+        <link rel="apple-touch-icon" sizes="76x76" href="assets/img/appletouchicon76x76.png">
+        <link rel="apple-touch-icon" sizes="120x120" href="assets/img/appletouchicon120x120.png">
+        <link rel="apple-touch-icon" sizes="152x152" href="assets/img/appletouchicon152x152.png">
+        <meta name="apple-mobile-web-app-capable" content="yes" />
         <link rel="stylesheet" href="css/bootstrap.min.css" />
         <link rel="stylesheet" href="css/font-awesome.min.css" />
         <link rel="stylesheet" href="css/styles.css" />
@@ -65,7 +72,7 @@ Contact: admin@apocalypselabs.net
                 </div><!-- /.modal-content -->
             </div><!-- /.modal-dialog -->
         </div><!-- /.modal -->
-        
+
         <div class="modal fade" id="magicModal">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -82,7 +89,7 @@ Contact: admin@apocalypselabs.net
                 </div><!-- /.modal-content -->
             </div><!-- /.modal-dialog -->
         </div><!-- /.modal -->
-        
+
         <div class="modal fade" id="armorModal">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -99,7 +106,7 @@ Contact: admin@apocalypselabs.net
                 </div><!-- /.modal-content -->
             </div><!-- /.modal-dialog -->
         </div><!-- /.modal -->
-        
+
         <div class="modal fade" id="playersModal">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -221,9 +228,14 @@ Contact: admin@apocalypselabs.net
         <script type="text/javascript" src="js/qr/html5-qrcode.min.js"></script>
         <script>
             function startQR(slot) {
-                $('#reader').html5_qrcode(function (data) {alert(data);}, function (error) {}, function (videoError) {alert("Could not get camera: "+videoError);});
+                $('#reader').html5_qrcode(function (data) {
+                    alert(data);
+                }, function (error) {
+                }, function (videoError) {
+                    alert("Could not get camera: " + videoError);
+                });
             }
-            </script>
-            <script src="js/main.js"></script>
+        </script>
+        <script src="js/main.js"></script>
     </body>
 </html>
