@@ -67,7 +67,7 @@ function gpsError(error) {
  */
 
 function getLocation() {
-    if (username === '') {
+    if (!loggedIn()) {
         return;
     }
     if (navigator.geolocation) {
@@ -96,7 +96,7 @@ function sendPosition(position) {
         getPositions(position);
     } else {
         var content = '<li class="list-group-item">Your location isn\'t accurate enough to play this game.</li>';
-        content += '<li class="list-group-item">Your accuracy: '+position.accuracy+' meters.</li>';
+        content += '<li class="list-group-item">Your accuracy: ' + position.accuracy + ' meters.</li>';
         content += '<li class="list-group-item">Required accuracy: 10 meters or less.</li>';
         $('#playerlist').html(content);
         $('#targetbox').html("<option>Error.  See player list.</option>");
@@ -153,22 +153,22 @@ function getPositions(position) {
  * @returns nothing
  */
 function getItems(cat) {
-    if (username !== "") {
-    $.get(
-            apiurl + "inventory.php",
-            {a: 'get',
-                u: username},
-    function (data) {
-        var obj = JSON.parse(data);
-        var content = "";
-        for (var item in obj) {
-            if (obj[item]['cat'] === cat) {
-                content += '<li class="list-group-item">' + obj[item]['name'] + ' &nbsp; <i>Uses remaining: ' + obj[item]['uses'] + '</i></li>';
+    if (loggedIn()) {
+        $.get(
+                apiurl + "inventory.php",
+                {a: 'get',
+                    u: username},
+        function (data) {
+            var obj = JSON.parse(data);
+            var content = "";
+            for (var item in obj) {
+                if (obj[item]['cat'] === cat) {
+                    content += '<li class="list-group-item">' + obj[item]['name'] + ' &nbsp; <i>Uses remaining: ' + obj[item]['uses'] + '</i></li>';
+                }
             }
+            $('#' + cat + 'list').html(content);
         }
-        $('#' + cat + 'list').html(content);
-    }
-    );
+        );
     }
 }
 
@@ -178,74 +178,122 @@ function getItems(cat) {
  * @returns nothing
  */
 function getStats() {
-    if (username !== "") {
-    $.get(
-            apiurl + "stats.php",
-            {u: username},
-    function (data) {
-        var obj = JSON.parse(data);
-        var hppercent = (obj['hp'] / obj['maxhp']) * 100;
-        var magicpercent = (obj['magic'] / obj['maxmagic']) * 100;
+    if (loggedIn()) {
+        $.get(
+                apiurl + "stats.php",
+                {u: username},
+        function (data) {
+            var obj = JSON.parse(data);
+            var hppercent = (obj['hp'] / obj['maxhp']) * 100;
+            var magicpercent = (obj['magic'] / obj['maxmagic']) * 100;
 
-        // Is something screwy?
-        if ((obj['hp'] > obj['maxhp']) || (obj['magic'] > obj['maxmagic']) || (obj['level'] < 1)) {
-            $.get(apiurl + "fixerr.php", {u: username}, function (data) {
-                if (data === '0') {
-                    alert("Heads up, some of your player stats had gone bad.  We automagically fixed them though, so no worries!");
-                } else {
-                    // Only bug user once
-                    if (broken === false) {
-                        alert("Oh, snap!  Your data is a little messed up.  You need to contact support to fix this.  Email support@aplabs.us and we\'ll get right on it.");
+            // Is something screwy?
+            if ((obj['hp'] > obj['maxhp']) || (obj['magic'] > obj['maxmagic']) || (obj['level'] < 1)) {
+                $.get(apiurl + "fixerr.php", {u: username}, function (data) {
+                    if (data === '0') {
+                        alert("Heads up, some of your player stats had gone bad.  We automagically fixed them though, so no worries!");
+                    } else {
+                        // Only bug user once
+                        if (broken === false) {
+                            alert("Oh, snap!  Your data is a little messed up.  You need to contact support to fix this.  Email support@aplabs.us and we\'ll get right on it.");
+                        }
+                        broken = true;
                     }
-                    broken = true;
-                }
-            });
-        } else {
-            $('#hpbar').css('width', hppercent + '%').attr('aria-valuenow', hppercent);
-            $('#hpbar').html(obj['hp'] + '/' + obj['maxhp']);
-            $('#magicbar').css('width', magicpercent + '%').attr('aria-valuenow', magicpercent);
-            $('#magicbar').html(obj['magic'] + '/' + obj['maxmagic']);
+                });
+            } else {
+                $('#hpbar').css('width', hppercent + '%').attr('aria-valuenow', hppercent);
+                $('#hpbar').html(obj['hp'] + '/' + obj['maxhp']);
+                $('#magicbar').css('width', magicpercent + '%').attr('aria-valuenow', magicpercent);
+                $('#magicbar').html(obj['magic'] + '/' + obj['maxmagic']);
+            }
         }
-    }
-    );
+        );
     }
 }
 
 function login() {
     $.get(apiurl + "login.php", {donothing: true}, function (junk) {
-        var tries = 0;
-        var user = prompt("Please enter your username.");
-        var pass = prompt("Now give your password.");
+        $('#loginerrmsg').css('display', 'none');
+        var user = $("#usernamebox").val();
+        var pass = $("#passwordbox").val();
         $.post(apiurl + "login.php", {u: user, p: pass},
         function (data) {
             if (data === 'BAD') {
-                tries += 1;
-                if (tries < 3) {
-                    alert("Login incorrect.");
-                } else {
-                    alert("Login incorrect.  Try logging in online for more details.");
-                }
-                login();
+                $('#loginerrmsg').css('display', 'default');
             } else {
                 done = true;
                 username = user;
                 password = pass;
-                if (data === 'NEW') {
-                    alert("Welcome to TerranQuest, " + username + "!  Your account has been linked successfully!");
-                }
+                createCookie('username', username, 15);
+                createCookie('password', password, 15);
+                $('#loginModal').modal('hide');
             }
         }
         );
     });
 }
 
+function showLogin() {
+    $('#loginModal').modal({
+        backdrop: 'static',
+        keyboard: false
+    });
+    $('#loginModal').modal('show');
+    $('#overlay').css('display', 'none');
+}
+
+function createCookie(name, value, days) {
+    var expires;
+    if (days) {
+        var date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = "; expires=" + date.toGMTString();
+    } else {
+        expires = "";
+    }
+    document.cookie = name + "=" + value + expires + "; path=/";
+}
+
+function readCookie(name) {
+    var nameEQ = name + "=";
+    var ca = document.cookie.split(';');
+    for (var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) === ' ')
+            c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) === 0)
+            return c.substring(nameEQ.length, c.length);
+    }
+    return null;
+}
+
+function eraseCookie(name) {
+    createCookie(name, "", -1);
+}
+
+function spamBox() {
+    if (!loggedIn()) {
+        if (!($('#loginModal').hasClass('in'))) {
+            showLogin();
+        }
+    }
+}
+
+function loggedIn() {
+    return !(username === "" || username === null || password === "" || password === null);
+}
+
 $(window).bind("load", function () {
-    if (username === "") {
-        setTimeout(login, 1000);
+    username = readCookie("username");
+    password = readCookie("password");
+    window.setInterval(spamBox, 1000);
+    if (!loggedIn()) {
+        setTimeout(showLogin, 1000);
+    } else {
+        setTimeout(function () {
+            $('#overlay').css('display', 'none');
+        }, 4000);
     }
     window.setInterval(getLocation, 3000);
     getStats();
-    setTimeout(function () {
-        $('#overlay').css('display', 'none');
-    }, 4000);
 });

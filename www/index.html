@@ -41,16 +41,36 @@ Contact: admin@apocalypselabs.net
                             <br/>We'd like to thank the following people and communities:
                         </p>
                         <ul class="list-group">
-                            <li class="list-group-item">Lorc from game-icons.net for the cool game icons</li>
-                            <li class="list-group-item">The users of StackOverflow for their bits of cool code</li>
-                            <li class="list-group-item">The Apache Cordova project, for their mobile app framework</li>
-                            <li class="list-group-item">Bootswatch, for their Cyborg theme</li>
+                            <li class="list-group-item">Lorc and contributers from game-icons.net</li>
+                            <li class="list-group-item">The users of StackOverflow</li>
                             <li class="list-group-item">You, for your support of this app!</li>
                         </ul>
                         <p>Application copyright &copy; 2014 Apocalypse Laboratories.  All rights (and wrongs) reserved.</p>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+        
+        <div class="modal fade" id="loginModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Login</h4>
+                        <p><small>Log in with your Apocalypse Laboratories account.</small></p>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert alert-danger" id="loginerrmsg" style="display: none;"><i class="fa fa-ban"></i> Login incorrect.</div>
+                        <label for="usernamebox">Username:</label>
+                        <input type="text" name="usernamebox" id="usernamebox" class="form-control" placeholder="Username"/>
+                        <br />
+                        <label for="passwordbox">Password:</label>
+                        <input type="password" id="passwordbox" class="form-control" placeholder="Password"/>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" onclick="login()">Login</button>
                     </div>
                 </div><!-- /.modal-content -->
             </div><!-- /.modal-dialog -->
@@ -154,7 +174,7 @@ Contact: admin@apocalypselabs.net
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">More <b class="caret"></b></a>
                         <ul class="dropdown-menu">
-                            <li><a href="#"></a></li>
+                            <li><a href="#" onclick="eraseCookie('username');eraseCookie('password');location.reload();">Logout</a></li>
                             <li><a href="#" data-toggle="modal" data-target="#creditsModal">Credits</a></li>
                         </ul>
                     </li>
