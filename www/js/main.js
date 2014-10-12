@@ -52,29 +52,11 @@ function gpsError(error) {
             alert("Location information is unavailable.");
             break;
         case error.TIMEOUT:
-            alert("Cannot get location.  Reload the page and give permission.");
+            alert("Cannot get location: timeout.");
             break;
         case error.UNKNOWN_ERROR:
             alert("An unknown error occurred.");
             break;
-    }
-}
-
-/**
- * Get the user's location and calls sendPosition() with the data.
- * 
- * @returns nothing.
- */
-
-function getLocation() {
-    if (!loggedIn()) {
-        return;
-    }
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(sendPosition, gpsError);
-    } else {
-        disable = true;
-        alert("This app will not function without location services.  Please upgrade your browser.");
     }
 }
 
@@ -85,8 +67,9 @@ function getLocation() {
  * @returns nothing
  */
 function sendPosition(position) {
+    $('#debugging').html("<p>Latitude: " + position.coords.latitude + "<br />Longitude: " + position.coords.longitude + "<br />Accuracy: "+position.coords.accuracy+"</p>");
     // Accuracy must be better than 10 meters (~33 feet).
-    if (position.accuracy < 10) {
+    if (position.coords.accuracy < 10) {
         $.get(
                 apiurl + "m.php",
                 {u: username,
@@ -96,10 +79,10 @@ function sendPosition(position) {
         getPositions(position);
     } else {
         var content = '<li class="list-group-item">Your location isn\'t accurate enough to play this game.</li>';
-        content += '<li class="list-group-item">Your accuracy: ' + position.accuracy + ' meters.</li>';
+        content += '<li class="list-group-item">Your accuracy: ' + position.coords.accuracy + ' meters.</li>';
         content += '<li class="list-group-item">Required accuracy: 10 meters or less.</li>';
         $('#playerlist').html(content);
-        $('#targetbox').html("<option>Error.  See player list.</option>");
+        $('#targetbox').html("<option>Waiting for better accuracy...</option>");
         $('#attackbtn').prop("disabled", true);
         $('#magicbtn').prop("disabled", true);
         $('#blockbtn').prop("disabled", true);
@@ -110,9 +93,10 @@ function sendPosition(position) {
  * Fetch and display the nearby players.
  * 
  * @param position The location data.
+ * @param badlocation TRUE if location not reliable.
  * @returns nothing.
  */
-function getPositions(position) {
+function getPositions(position, badlocation) {
     $.get(
             apiurl + "m.php",
             {lat: position.coords.latitude,
@@ -128,9 +112,7 @@ function getPositions(position) {
             }
             targetc += '<option>' + user + '</option>';
         }
-        $('#attackbtn').prop("disabled", false);
         $('#magicbtn').prop("disabled", false);
-        $('#blockbtn').prop("disabled", false);
         if (content === "") {
             content = '<li class="list-group-item">Nobody else in sight...</li>';
             $('#attackbtn').prop("disabled", true);
@@ -140,9 +122,40 @@ function getPositions(position) {
             $('#blockbtn').prop("disabled", false);
         }
         $('#playerlist').html(content);
-        $('#targetbox').html(targetc);
+        if (badlocation === true) {
+            $('#attackbtn').prop("disabled", true);
+            $('#magicbtn').prop("disabled", true);
+            $('#blockbtn').prop("disabled", true);
+        } else {
+            $('#targetbox').html(targetc);
+        }
     }
     );
+}
+
+/**
+ * Download and display the messages for the user.
+ * 
+ * @returns nothing.
+ */
+function getMsgs() {
+    if (loggedIn()) {
+        $.get(
+                apiurl + "getmsgs.php",
+                {u: username},
+        function (data) {
+            var obj = data.split("\n");
+            var content = "";
+            var alength = obj.length;
+            for (var i = 0; i < alength; i++) {
+                if (obj[i] !== '') {
+                    content += '<li class="list-group-item">' + obj[i] + '</li>';
+                }
+            }
+            $('#messagelist').html(content);
+        }
+        );
+    }
 }
 
 /**
@@ -169,6 +182,26 @@ function getItems(cat) {
             $('#' + cat + 'list').html(content);
         }
         );
+    }
+}
+
+/**
+ * Get the user's location and calls sendPosition() with the data.
+ * 
+ * @returns nothing.
+ */
+
+function getLocation() {
+    if (!loggedIn()) {
+        return;
+    }
+    if (navigator.geolocation) {
+        navigator.geolocation.watchPosition(sendPosition,
+                gpsError,
+                {maximumAge: 30000, timeout: 10000, enableHighAccuracy: true});
+    } else {
+        disable = true;
+        alert("This app will not function without location services.  Please upgrade your browser.");
     }
 }
 
@@ -295,5 +328,6 @@ $(window).bind("load", function () {
         }, 4000);
     }
     window.setInterval(getLocation, 3000);
+    window.setInterval(getMsgs, 1000);
     getStats();
 });
