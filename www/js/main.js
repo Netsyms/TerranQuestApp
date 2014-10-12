@@ -15,6 +15,8 @@ var password = '';
 // If something is wrong
 var broken = false;
 
+var alertspamcount = 0;
+
 // Equipped item IDs
 // default values shown
 var weapon = "none";
@@ -43,31 +45,42 @@ $('#armorModal').on('shown.bs.modal', function (e) {
     getItems('armor');
 });
 
+
+/**
+ * Show an error for GPS stuff.
+ * 
+ * Doesn't bother every time, only every 5th error.
+ * Otherwise it might spam a lot and make the app unusuable.
+ * 
+ * @param error The error.
+ */
 function gpsError(error) {
-    switch (error.code) {
-        case error.PERMISSION_DENIED:
-            alert("This app needs your location to function.  Please enable it.");
-            break;
-        case error.POSITION_UNAVAILABLE:
-            alert("Location information is unavailable.");
-            break;
-        case error.TIMEOUT:
-            alert("Cannot get location: timeout.");
-            break;
-        case error.UNKNOWN_ERROR:
-            alert("An unknown error occurred.");
-            break;
+    if (alertspamcount % 5 === 0) {
+        switch (error.code) {
+            case error.PERMISSION_DENIED:
+                alert("This app needs your location to function.  Please enable it.");
+                break;
+            case error.POSITION_UNAVAILABLE:
+                alert("Location information is unavailable.");
+                break;
+            case error.TIMEOUT:
+                alert("Cannot get location: timeout.");
+                break;
+            case error.UNKNOWN_ERROR:
+                alert("An unknown error occurred.");
+                break;
+        }
     }
+    alertspamcount++;
 }
 
 /**
  * Send the user's location to the server, then calls getPositions().
  * 
  * @param position The user's location.
- * @returns nothing
  */
 function sendPosition(position) {
-    $('#debugging').html("<p>Latitude: " + position.coords.latitude + "<br />Longitude: " + position.coords.longitude + "<br />Accuracy: "+position.coords.accuracy+"</p>");
+    $('#debugging').html("<p>Latitude: " + position.coords.latitude + "<br />Longitude: " + position.coords.longitude + "<br />Accuracy: " + position.coords.accuracy + "</p>");
     // Accuracy must be better than 10 meters (~33 feet).
     if (position.coords.accuracy < 10) {
         $.get(
@@ -94,7 +107,6 @@ function sendPosition(position) {
  * 
  * @param position The location data.
  * @param badlocation TRUE if location not reliable.
- * @returns nothing.
  */
 function getPositions(position, badlocation) {
     $.get(
@@ -135,8 +147,6 @@ function getPositions(position, badlocation) {
 
 /**
  * Download and display the messages for the user.
- * 
- * @returns nothing.
  */
 function getMsgs() {
     if (loggedIn()) {
@@ -163,7 +173,6 @@ function getMsgs() {
  * Filters to the category specified.
  * 
  * @param cat The category of items.  Can be "weapon", "armor", or "magic".
- * @returns nothing
  */
 function getItems(cat) {
     if (loggedIn()) {
@@ -187,10 +196,7 @@ function getItems(cat) {
 
 /**
  * Get the user's location and calls sendPosition() with the data.
- * 
- * @returns nothing.
  */
-
 function getLocation() {
     if (!loggedIn()) {
         return;
@@ -207,8 +213,8 @@ function getLocation() {
 
 /**
  * Get the stats for the current user and updates the display.
- * 
- * @returns nothing
+ * If invalid stats are detected, it instead requests the server to 
+ * fix the stats.
  */
 function getStats() {
     if (loggedIn()) {
@@ -244,6 +250,10 @@ function getStats() {
     }
 }
 
+/**
+ * Handle the login procedure.  Gets user/pass from modal and authenticates.
+ * Sets cookies on success.
+ */
 function login() {
     $.get(apiurl + "login.php", {donothing: true}, function (junk) {
         $('#loginerrmsg').css('display', 'none');
@@ -266,6 +276,9 @@ function login() {
     });
 }
 
+/**
+ * Show the login modal box.
+ */
 function showLogin() {
     $('#loginModal').modal({
         backdrop: 'static',
@@ -275,6 +288,12 @@ function showLogin() {
     $('#overlay').css('display', 'none');
 }
 
+/**
+ * Create or update a cookie.
+ * @param {String} name Cookie name
+ * @param {String} value Cookie contents (chocolate chips please)
+ * @param {int} days How many days until cookie expires
+ */
 function createCookie(name, value, days) {
     var expires;
     if (days) {
@@ -287,6 +306,12 @@ function createCookie(name, value, days) {
     document.cookie = name + "=" + value + expires + "; path=/";
 }
 
+/**
+ * Read the given cookie name and return the data.
+ * 
+ * @param {String} name Cookie name.
+ * @returns {Object} Data if set, else null.
+ */
 function readCookie(name) {
     var nameEQ = name + "=";
     var ca = document.cookie.split(';');
@@ -300,10 +325,20 @@ function readCookie(name) {
     return null;
 }
 
+/**
+ * Erase the cookie with the given name.
+ * 
+ * @param {String} name Cookie name.
+ */
 function eraseCookie(name) {
     createCookie(name, "", -1);
 }
 
+/**
+ * If the user isn't logged in, keep bringing up the login box.
+ * Prevents from doing things when not logged in, you'd have to be
+ * really fast to click through a menu in under a second!
+ */
 function spamBox() {
     if (!loggedIn()) {
         if (!($('#loginModal').hasClass('in'))) {
@@ -312,10 +347,17 @@ function spamBox() {
     }
 }
 
+/**
+ * Checks if the user has logged in to the app.
+ * 
+ * @returns {Boolean} TRUE if user logged in.
+ */
 function loggedIn() {
     return !(username === "" || username === null || password === "" || password === null);
 }
 
+
+// Start the app going.
 $(window).bind("load", function () {
     username = readCookie("username");
     password = readCookie("password");
