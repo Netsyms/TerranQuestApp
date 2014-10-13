@@ -18,11 +18,8 @@ var broken = false;
 var alertspamcount = 0;
 
 // Equipped item IDs
-// default values shown
-var weapon = "none";
-var magic = "sparks";
-var armor = "hoodie";
-
+var weapon = null;
+var magic = null;
 
 // Get health stats every 3 seconds.
 window.setInterval(getStats, 3000);
@@ -40,9 +37,9 @@ $('#magicModal').on('shown.bs.modal', function (e) {
     getItems('magic');
 });
 
-$('#armorModal').on('shown.bs.modal', function (e) {
-    $('#armorlist').html(loadingCode);
-    getItems('armor');
+$('#resModal').on('shown.bs.modal', function (e) {
+    $('#resourceslist').html(loadingCode);
+    getItems('resources');
 });
 
 
@@ -172,26 +169,64 @@ function getMsgs() {
  * Fetch and display the items in the user's server inventory.
  * Filters to the category specified.
  * 
- * @param cat The category of items.  Can be "weapon", "armor", or "magic".
+ * @param cat The category of items.  Can be "weapon", "resources", or "magic".
  */
 function getItems(cat) {
     if (loggedIn()) {
         $.get(
                 apiurl + "inventory.php",
                 {a: 'get',
-                    u: username},
+                    u: username,
+                    cat: cat},
         function (data) {
             var obj = JSON.parse(data);
             var content = "";
             for (var item in obj) {
-                if (obj[item]['cat'] === cat) {
-                    content += '<li class="list-group-item">' + obj[item]['name'] + ' &nbsp; <i>Uses remaining: ' + obj[item]['uses'] + '</i></li>';
+                if (obj[item]['cat'] === cat && obj[item]['isLocked'] !== "TRUE") {
+                    if (cat === 'resources') {
+                        content += '<li class="list-group-item">'
+                                + obj[item]['name'] 
+                                + ' &nbsp; <i>x' 
+                                + obj[item]['uses'] + '</i></li>';
+                    } else {
+                        content += '<li class="list-group-item">'
+                                + '<div class="input-group">'
+                                + '<span class="input-group-addon">'
+                                + '<input type="radio" class="form-control checklist-text" name="'
+                                + cat + '" value="'
+                                + item + '" /></span>'
+                                + '<div class="form-control checklist-text" >' 
+                                + obj[item]['name']
+                                + ' &nbsp; <i>Uses remaining: ' 
+                                + obj[item]['uses'] + '</i></div></div></li>';
+                    }
                 }
+            }
+            if (content === "") {
+                content = '<li class="list-group-item">No items found!</li>';
             }
             $('#' + cat + 'list').html(content);
         }
         );
     }
+}
+
+/**
+ * Equip the selected item from the modal to the given category slot.
+ * 
+ * @param {String} cat The item category called.
+ */
+function equipItem(cat) {
+    var itemid = $("input:radio[name='"+cat+"']:checked").val();
+    switch (cat) {
+        case "weapon":
+            weapon = itemid;
+            break;
+        case "magic":
+            magic = itemid;
+            break;
+    }
+    alert("Equipped "+itemid+" in category "+cat);
 }
 
 /**

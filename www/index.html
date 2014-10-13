@@ -87,7 +87,7 @@ Contact: admin@apocalypselabs.net
                         <ul class="list-group" id="weaponlist"><li class="list-group-item"><i class="fa fa-spinner fa-spin"></i> <i>Loading...</i></li></ul>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Equip</button>
+                        <button type="button" class="btn btn-default" onclick="equipItem('weapon')" data-dismiss="modal">Equip</button>
                     </div>
                 </div><!-- /.modal-content -->
             </div><!-- /.modal-dialog -->
@@ -104,24 +104,25 @@ Contact: admin@apocalypselabs.net
                         <ul class="list-group" id="magiclist"><li class="list-group-item"><i class="fa fa-spinner fa-spin"></i> <i>Loading...</i></li></ul>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Equip</button>
+                        <button type="button" class="btn btn-default" onclick="equipItem('magic')" data-dismiss="modal">Equip</button>
                     </div>
                 </div><!-- /.modal-content -->
             </div><!-- /.modal-dialog -->
         </div><!-- /.modal -->
 
-        <div class="modal fade" id="armorModal">
+        <div class="modal fade" id="resModal">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                        <h4 class="modal-title">Equip Item</h4>
+                        <h4 class="modal-title">Crafting Resources</h4>
                     </div>
                     <div class="modal-body">
-                        <ul class="list-group" id="armorlist"><li class="list-group-item"><i class="fa fa-spinner fa-spin"></i> <i>Loading...</i></li></ul>
+                        <div class="alert alert-info"><i class="fa fa-info-circle"></i> You can only craft items on a workbench (computer).</div>
+                        <ul class="list-group" id="resourceslist"><li class="list-group-item"><i class="fa fa-spinner fa-spin"></i> <i>Loading...</i></li></ul>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Equip</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                     </div>
                 </div><!-- /.modal-content -->
             </div><!-- /.modal-dialog -->
@@ -157,15 +158,15 @@ Contact: admin@apocalypselabs.net
                 <ul class="nav navbar-nav">
                     <li><a href="#" data-toggle="modal" data-target="#playersModal">Players</a></li>
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Equip <b class="caret"></b></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Inventory <b class="caret"></b></a>
                         <ul class="dropdown-menu">
-                            <li class="dropdown-header" style="padding: 5px;">Select a slot to equip an item.</li>
+                            <li class="dropdown-header" style="padding: 5px;">Select a category:</li>
                             <li class="divider"></li>
                             <li style="padding: 5px; text-align: center;"><a href="#weapon" data-toggle="modal" data-target="#weaponModal" id="openweapon"><img class="itemicon" src="assets/ico/broadsword.svg" alt=""/> Weapon</a></li>
                             <li class="divider"></li>
                             <li style="padding: 5px; text-align: center;"><a href="#magic" data-toggle="modal" data-target="#magicModal" id="openmagic"><img class="itemicon" src="assets/ico/drink-me.svg" alt=""/> Magic</a></li>
                             <li class="divider"></li>
-                            <li style="padding: 5px; text-align: center;"><a href="#armor" data-toggle="modal" data-target="#armorModal" id="openarmor"><img class="itemicon" src="assets/ico/layered-armor.svg" alt=""/> Armor</a></li>
+                            <li style="padding: 5px; text-align: center;"><a href="#resources" data-toggle="modal" data-target="#resModal" id="openresources"><img class="itemicon" src="assets/ico/metal-bar.png" alt=""/> Resources</a></li>
                             <li class="divider"></li>
                         </ul>
                     </li>
@@ -234,14 +235,7 @@ Contact: admin@apocalypselabs.net
             <hr>
             <h6>Messages:</h6>
             <ul class="list-group" id="messagelist">
-                <li class="list-group-item">...</li>
-                <li class="list-group-item">...</li>
-                <li class="list-group-item">...</li>
-                <li class="list-group-item">...</li>
-                <li class="list-group-item">...</li>
-                <li class="list-group-item">...</li>
-                <li class="list-group-item">...</li>
-                <li class="list-group-item">...</li>
+                <li class="list-group-item">Loading...</li>
             </ul>
             <h6>Debugging:</h6>
             <div id="debugging">
