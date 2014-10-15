@@ -55,16 +55,16 @@ function gpsError(error) {
     if (alertspamcount % 5 === 0) {
         switch (error.code) {
             case error.PERMISSION_DENIED:
-                alert("This app needs your location to function.  Please enable it.");
+                new Android_Toast({content: "This app needs your location to function.  Please enable it."});
                 break;
             case error.POSITION_UNAVAILABLE:
-                alert("Location information is unavailable.");
+                new Android_Toast({content: "Location information is unavailable."});
                 break;
             case error.TIMEOUT:
-                alert("Cannot get location: timeout.");
+                new Android_Toast({content: "Cannot get location: timeout."});
                 break;
             case error.UNKNOWN_ERROR:
-                alert("An unknown error occurred.");
+                new Android_Toast({content: "An unknown error occurred."});
                 break;
         }
     }
@@ -226,7 +226,7 @@ function equipItem(cat) {
             magic = itemid;
             break;
     }
-    alert("Equipped "+itemid+" in category "+cat);
+    new Android_Toast({content: "Equipped "+cat+"."});
 }
 
 /**
@@ -265,11 +265,11 @@ function getStats() {
             if ((obj['hp'] > obj['maxhp']) || (obj['magic'] > obj['maxmagic']) || (obj['level'] < 1)) {
                 $.get(apiurl + "fixerr.php", {u: username}, function (data) {
                     if (data === '0') {
-                        alert("Heads up, some of your player stats had gone bad.  We automagically fixed them though, so no worries!");
+                        new Android_Toast({content: "Heads up, some of your player stats had gone bad.  <br />We automagically fixed them though, so no worries!"});
                     } else {
                         // Only bug user once
                         if (broken === false) {
-                            alert("Oh, snap!  Your data is a little messed up.  You need to contact support to fix this.  Email support@aplabs.us and we\'ll get right on it.");
+                            new Android_Toast({content: "Oh, snap!  Your data is a little messed up.  <br />You need to contact support to fix this.  <br />Email support@aplabs.us and we\'ll get right on it."});
                         }
                         broken = true;
                     }
@@ -380,6 +380,12 @@ function spamBox() {
             showLogin();
         }
     }
+}
+/**
+ * Request the game server to get you some L00t.
+ */
+function findItems() {
+    
 }
 
 /**
