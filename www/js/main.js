@@ -405,6 +405,26 @@ function loggedIn() {
     return !(username === "" || username === null || password === "" || password === null);
 }
 
+function doaction(action) {
+    if (loggedIn() && accuracy < 10) {
+        var target = $( "#targetbox option:selected" ).text();
+        var tool = "";
+        if (action === 'attack') {
+            tool = weapon;
+        } else if (action === 'magic') {
+            tool = magic;
+        }
+        if (target !== "" && 
+                target !== "Loading..." && 
+                target !== "Waiting for better accuracy...") {
+            $.get(
+                apiurl + "action.php",
+                {u: username, t: target, a: action, w: tool}
+        );
+        }
+    }
+}
+
 
 // Start the app going.
 $(window).bind("load", function () {

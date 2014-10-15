@@ -222,13 +222,13 @@ Contact: admin@apocalypselabs.net
                         <label>Actions:</label>
                         <div class="row">
                             <div class="col-xs-4">
-                                <button id="attackbtn" class="btn btn-danger" style="width: 100%;">Attack</button>
+                                <button id="attackbtn" onclick="doaction('attack');" class="btn btn-danger" style="width: 100%;">Attack</button>
                             </div>
                             <div class="col-xs-4">
-                                <button id="magicbtn" class="btn btn-info" style="width: 100%;">Magic</button>
+                                <button id="magicbtn" onclick="doaction('magic');" class="btn btn-info" style="width: 100%;">Magic</button>
                             </div>
                             <div class="col-xs-4">
-                                <button id="blockbtn" class="btn btn-warning" style="width: 100%;">Block</button>
+                                <button id="blockbtn" onclick="doaction('block');" class="btn btn-warning" style="width: 100%;">Block</button>
                             </div>
                         </div>
                     </div>
@@ -243,18 +243,6 @@ Contact: admin@apocalypselabs.net
             <div id="debugging">
             </div>
         </div>
-        <!-- QR code stuff -->
-        <script type="text/javascript" src="js/qr/html5-qrcode.min.js"></script>
-        <script>
-            function startQR(slot) {
-                $('#reader').html5_qrcode(function (data) {
-                    alert(data);
-                }, function (error) {
-                }, function (videoError) {
-                    alert("Could not get camera: " + videoError);
-                });
-            }
-        </script>
         <script src="js/main.js"></script>
     </body>
 </html>
