@@ -15,6 +15,8 @@ var password = '';
 // If something is wrong
 var broken = false;
 
+var accuracy = 9999;
+
 var alertspamcount = 0;
 
 // Equipped item IDs
@@ -79,6 +81,7 @@ function gpsError(error) {
 function sendPosition(position) {
     $('#debugging').html("<p>Latitude: " + position.coords.latitude + "<br />Longitude: " + position.coords.longitude + "<br />Accuracy: " + position.coords.accuracy + "</p>");
     // Accuracy must be better than 10 meters (~33 feet).
+    accuracy = position.coords.accuracy;
     if (position.coords.accuracy < 10) {
         $.get(
                 apiurl + "m.php",
@@ -185,8 +188,8 @@ function getItems(cat) {
                 if (obj[item]['cat'] === cat && obj[item]['isLocked'] !== "TRUE") {
                     if (cat === 'resources') {
                         content += '<li class="list-group-item">'
-                                + obj[item]['name'] 
-                                + ' &nbsp; <i>x' 
+                                + obj[item]['name']
+                                + ' &nbsp; <i>x'
                                 + obj[item]['uses'] + '</i></li>';
                     } else {
                         content += '<li class="list-group-item">'
@@ -195,9 +198,9 @@ function getItems(cat) {
                                 + '<input type="radio" class="form-control checklist-text" name="'
                                 + cat + '" value="'
                                 + item + '" /></span>'
-                                + '<div class="form-control checklist-text" >' 
+                                + '<div class="form-control checklist-text" >'
                                 + obj[item]['name']
-                                + ' &nbsp; <i>Uses remaining: ' 
+                                + ' &nbsp; <i>Uses remaining: '
                                 + obj[item]['uses'] + '</i></div></div></li>';
                     }
                 }
@@ -217,7 +220,7 @@ function getItems(cat) {
  * @param {String} cat The item category called.
  */
 function equipItem(cat) {
-    var itemid = $("input:radio[name='"+cat+"']:checked").val();
+    var itemid = $("input:radio[name='" + cat + "']:checked").val();
     switch (cat) {
         case "weapon":
             weapon = itemid;
@@ -226,7 +229,7 @@ function equipItem(cat) {
             magic = itemid;
             break;
     }
-    new Android_Toast({content: "Equipped "+cat+"."});
+    new Android_Toast({content: "Equipped " + cat + "."});
 }
 
 /**
@@ -385,7 +388,12 @@ function spamBox() {
  * Request the game server to get you some L00t.
  */
 function findItems() {
-    
+    if (loggedIn() && accuracy < 50) {
+        $.get(
+                apiurl + "finditem.php",
+                {u: username}
+        );
+    }
 }
 
 /**
@@ -412,5 +420,6 @@ $(window).bind("load", function () {
     }
     window.setInterval(getLocation, 3000);
     window.setInterval(getMsgs, 1000);
+    window.setInterval(findItems, 10000);
     getStats();
 });
