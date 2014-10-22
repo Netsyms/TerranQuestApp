@@ -172,7 +172,7 @@ function getMsgs() {
  * Fetch and display the items in the user's server inventory.
  * Filters to the category specified.
  * 
- * @param cat The category of items.  Can be "weapon", "resources", or "magic".
+ * @param cat The category of items.  Can be "weapons", "resources", or "magic".
  */
 function getItems(cat) {
     if (loggedIn()) {
@@ -185,13 +185,14 @@ function getItems(cat) {
             var obj = JSON.parse(data);
             var content = "";
             for (var item in obj) {
-                if (obj[item]['cat'] === cat && obj[item]['isLocked'] !== "TRUE") {
+                if (obj[item]['uses'] > 0 && obj[item]['isLocked'] !== "TRUE") {
                     if (cat === 'resources') {
                         content += '<li class="list-group-item">'
                                 + obj[item]['name']
                                 + ' &nbsp; <i>x'
                                 + obj[item]['uses'] + '</i></li>';
                     } else {
+                        //alert(obj[item]['uses']+" uses for "+item);
                         content += '<li class="list-group-item">'
                                 + '<div class="input-group">'
                                 + '<span class="input-group-addon">'
@@ -204,7 +205,9 @@ function getItems(cat) {
                                 + obj[item]['uses'] + '</i></div></div></li>';
                     }
                 }
+                //alert("Next");
             }
+            //alert("Done with loop");
             if (content === "") {
                 content = '<li class="list-group-item">No items found!</li>';
             }
@@ -222,14 +225,16 @@ function getItems(cat) {
 function equipItem(cat) {
     var itemid = $("input:radio[name='" + cat + "']:checked").val();
     switch (cat) {
-        case "weapon":
+        case "weapons":
             weapon = itemid;
             break;
         case "magic":
             magic = itemid;
             break;
     }
-    new Android_Toast({content: "Equipped " + cat + "."});
+    $.get(apiurl+"getnicename.php", {id: itemid.split("|")[0]}, function (data) {
+        new Android_Toast({content: "Equipped " + data + "."});
+    });
 }
 
 /**

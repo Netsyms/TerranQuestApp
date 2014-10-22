@@ -26,6 +26,13 @@ Contact: admin@apocalypselabs.net
         <script src="js/jquery/jquery.js"></script>
         <script src="js/bootstrap.min.js"></script>
         <script src="js/toast.js"></script>
+        <script src="js/konami.js"></script>
+        <script>
+            var debugging = new Konami(function() { 
+                new Android_Toast({content: "Developer mode enabled!"});
+                $('#debugdata').css('display', 'default');
+            });
+        </script>    
     </head>
     <body style="padding-top: 70px;">
 
@@ -86,10 +93,10 @@ Contact: admin@apocalypselabs.net
                         <h4 class="modal-title">Equip Weapon</h4>
                     </div>
                     <div class="modal-body">
-                        <ul class="list-group" id="weaponlist"><li class="list-group-item"><i class="fa fa-spinner fa-spin"></i> <i>Loading...</i></li></ul>
+                        <ul class="list-group" id="weaponslist"><li class="list-group-item"><i class="fa fa-spinner fa-spin"></i> <i>Loading...</i></li></ul>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-default" onclick="equipItem('weapon')" data-dismiss="modal">Equip</button>
+                        <button type="button" class="btn btn-default" onclick="equipItem('weapons')" data-dismiss="modal">Equip</button>
                     </div>
                 </div><!-- /.modal-content -->
             </div><!-- /.modal-dialog -->
@@ -239,8 +246,10 @@ Contact: admin@apocalypselabs.net
             <ul class="list-group" id="messagelist">
                 <li class="list-group-item">Loading...</li>
             </ul>
+            <div id="debugdata" style="display: none;">
             <h6>Debugging:</h6>
             <div id="debugging">
+            </div>
             </div>
         </div>
         <script src="js/main.js"></script>
