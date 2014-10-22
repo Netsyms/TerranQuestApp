@@ -31,7 +31,7 @@ var loadingCode = '<li class="list-group-item"><i class="fa fa-spinner fa-spin">
 
 $('#weaponModal').on('shown.bs.modal', function (e) {
     $('#weaponlist').html(loadingCode);
-    getItems('weapon');
+    getItems('weapons');
 });
 
 $('#magicModal').on('shown.bs.modal', function (e) {
@@ -423,6 +423,10 @@ function doaction(action) {
         );
         }
     }
+}
+
+function doBlock() {
+    $.get(apiurl + "block.php", {u: username});
 }
 
 
