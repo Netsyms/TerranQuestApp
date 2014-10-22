@@ -82,7 +82,7 @@ function sendPosition(position) {
     $('#debugging').html("<p>Latitude: " + position.coords.latitude + "<br />Longitude: " + position.coords.longitude + "<br />Accuracy: " + position.coords.accuracy + "</p>");
     // Accuracy must be better than 10 meters (~33 feet).
     accuracy = position.coords.accuracy;
-    if (position.coords.accuracy < 10) {
+    if (position.coords.accuracy < 11) {
         $.get(
                 apiurl + "m.php",
                 {u: username,
@@ -411,7 +411,7 @@ function loggedIn() {
 }
 
 function doaction(action) {
-    if (loggedIn() && accuracy < 10) {
+    if (loggedIn() && accuracy < 11) {
         var target = $( "#targetbox option:selected" ).text();
         var tool = "";
         if (action === 'attack') {
@@ -419,9 +419,13 @@ function doaction(action) {
         } else if (action === 'magic') {
             tool = magic;
         }
+        if ((tool === null || tool === '')) {
+            tool = 'fists';
+        }
         if (target !== "" && 
                 target !== "Loading..." && 
-                target !== "Waiting for better accuracy...") {
+                target !== "Waiting for better accuracy..." &&
+                (tool !== 'fists' && action !== 'magic')) {
             $.get(
                 apiurl + "action.php",
                 {u: username, t: target, a: action, w: tool}
