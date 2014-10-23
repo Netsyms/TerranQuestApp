@@ -28,7 +28,7 @@ Contact: admin@apocalypselabs.net
         <script src="js/toast.js"></script>
         <script src="js/konami.js"></script>
         <script>
-            var debugging = new Konami(function() { 
+            var debugging = new Konami(function () {
                 new Android_Toast({content: "Developer mode enabled!"});
                 $('#debugdata').css('display', 'default');
             });
@@ -62,7 +62,7 @@ Contact: admin@apocalypselabs.net
                 </div><!-- /.modal-content -->
             </div><!-- /.modal-dialog -->
         </div><!-- /.modal -->
-        
+
         <div class="modal fade" id="loginModal">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -154,6 +154,17 @@ Contact: admin@apocalypselabs.net
             </div><!-- /.modal-dialog -->
         </div><!-- /.modal -->
 
+        <div class="modal fade" id="deathModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-body" style="text-align: center;">
+                        <h1 style="color: red;">YOU ARE DEAD.</h1>
+                        <h2><i class="fa fa-spinner fa-spin"></i> Reviving...</h2>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+
         <div class="navbar navbar-inverse navbar-fixed-top" id="navbardiv">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-inverse-collapse">
@@ -184,7 +195,9 @@ Contact: admin@apocalypselabs.net
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">More <b class="caret"></b></a>
                         <ul class="dropdown-menu">
-                            <li><a href="#" onclick="eraseCookie('username');eraseCookie('password');location.reload();">Logout</a></li>
+                            <li><a href="#" onclick="eraseCookie('username');
+                                    eraseCookie('password');
+                                    location.reload();">Logout</a></li>
                             <li><a href="#" data-toggle="modal" data-target="#creditsModal">Credits</a></li>
                         </ul>
                     </li>
@@ -205,7 +218,8 @@ Contact: admin@apocalypselabs.net
                         </div>
                     </div>
                 </div>
-                <div class="row">
+                <!-- Invisible until implemented on the server all the way -->
+                <div class="row" style="display: none;">
                     <div class="col-xs-2">
                         <label>Magic:</label>
                     </div>
@@ -247,9 +261,10 @@ Contact: admin@apocalypselabs.net
                 <li class="list-group-item">Loading...</li>
             </ul>
             <div id="debugdata" style="display: none;">
-            <h6>Debugging:</h6>
-            <div id="debugging">
-            </div>
+                <h6>Debugging:</h6>
+                <div id="debugging">
+                </div>
+                <a onclick="killYou()" class="btn btn-danger">Suicide Simulation</a>
             </div>
         </div>
         <script src="js/main.js"></script>

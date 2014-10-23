@@ -23,6 +23,8 @@ var alertspamcount = 0;
 var weapon = null;
 var magic = null;
 
+var dead = false;
+
 // Get health stats every 3 seconds.
 window.setInterval(getStats, 3000);
 
@@ -232,7 +234,7 @@ function equipItem(cat) {
             magic = itemid;
             break;
     }
-    $.get(apiurl+"getnicename.php", {id: itemid.split("|")[0]}, function (data) {
+    $.get(apiurl + "getnicename.php", {id: itemid.split("|")[0]}, function (data) {
         new Android_Toast({content: "Equipped " + data + "."});
     });
 }
@@ -287,6 +289,9 @@ function getStats() {
                 $('#hpbar').html(obj['hp'] + '/' + obj['maxhp']);
                 $('#magicbar').css('width', magicpercent + '%').attr('aria-valuenow', magicpercent);
                 $('#magicbar').html(obj['magic'] + '/' + obj['maxmagic']);
+                if (obj['hp'] <= 0) {
+                    killYou();
+                }
             }
         }
         );
@@ -329,6 +334,29 @@ function showLogin() {
     });
     $('#loginModal').modal('show');
     $('#overlay').css('display', 'none');
+}
+
+/**
+ * Lockup the game and show YOU ARE DEAD box.
+ * 
+ * "revive" 30 seconds later.
+ */
+function killYou() {
+    $('#deathModal').modal({
+        backdrop: 'static',
+        keyboard: false
+    });
+    $('#deathModal').modal('show');
+    setTimeout(notDeadNow, 30*1000);
+}
+
+/**
+ * "revive" the player by hiding the death modal.
+ * By the time this happens, at least some HP should have regen'd.
+ */
+function notDeadNow() {
+    $('#deathModal').modal('hide');
+    new Android_Toast({content: "Welcome back, "+username+"!  Be more careful this time!"});
 }
 
 /**
@@ -412,7 +440,7 @@ function loggedIn() {
 
 function doaction(action) {
     if (loggedIn() && accuracy < 11) {
-        var target = $( "#targetbox option:selected" ).text();
+        var target = $("#targetbox option:selected").text();
         var tool = "";
         if (action === 'attack') {
             tool = weapon;
@@ -422,14 +450,14 @@ function doaction(action) {
         if ((tool === null || tool === '')) {
             tool = 'fists';
         }
-        if (target !== "" && 
-                target !== "Loading..." && 
+        if (target !== "" &&
+                target !== "Loading..." &&
                 target !== "Waiting for better accuracy..." &&
                 (tool !== 'fists' && action !== 'magic')) {
             $.get(
-                apiurl + "action.php",
-                {u: username, t: target, a: action, w: tool}
-        );
+                    apiurl + "action.php",
+                    {u: username, t: target, a: action, w: tool}
+            );
         }
     }
 }
