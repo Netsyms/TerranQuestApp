@@ -25,6 +25,8 @@ var magic = null;
 
 var dead = false;
 
+var myPos = null;
+
 // Get health stats every 3 seconds.
 window.setInterval(getStats, 3000);
 
@@ -81,17 +83,19 @@ function gpsError(error) {
  * @param position The user's location.
  */
 function sendPosition(position) {
+    myPos = position;
     $('#debugging').html("<p>Latitude: " + position.coords.latitude + "<br />Longitude: " + position.coords.longitude + "<br />Accuracy: " + position.coords.accuracy + "</p>");
     // Accuracy must be better than 10 meters (~33 feet).
     accuracy = position.coords.accuracy;
     if (position.coords.accuracy < 11) {
+        myPos = position
+        $('#targetbox').html("<option>Loading...</option>");
         $.get(
                 apiurl + "m.php",
                 {u: username,
                     lat: position.coords.latitude,
                     long: position.coords.longitude,
                     a: 'setstatus'});
-        getPositions(position);
     } else {
         var content = '<li class="list-group-item">Your location isn\'t accurate enough to play this game.</li>';
         content += '<li class="list-group-item">Your accuracy: ' + position.coords.accuracy + ' meters.</li>';
@@ -106,11 +110,9 @@ function sendPosition(position) {
 
 /**
  * Fetch and display the nearby players.
- * 
- * @param position The location data.
- * @param badlocation TRUE if location not reliable.
  */
-function getPositions(position, badlocation) {
+function getPositions() {
+    var position = myPos;
     $.get(
             apiurl + "m.php",
             {lat: position.coords.latitude,
@@ -136,13 +138,7 @@ function getPositions(position, badlocation) {
             $('#blockbtn').prop("disabled", false);
         }
         $('#playerlist').html(content);
-        if (badlocation === true) {
-            $('#attackbtn').prop("disabled", true);
-            $('#magicbtn').prop("disabled", true);
-            $('#blockbtn').prop("disabled", true);
-        } else {
-            $('#targetbox').html(targetc);
-        }
+        $('#targetbox').html(targetc);
     }
     );
 }
@@ -481,6 +477,7 @@ $(window).bind("load", function () {
     }
     window.setInterval(getLocation, 3000);
     window.setInterval(getMsgs, 1000);
+    window.setInterval(getPositions, 20000);
     window.setInterval(findItems, 10000);
     getStats();
 });
