@@ -8,5 +8,5 @@ With TerranQuest, you can:
  - Battle with nearby players and gain strength by using your weapons!
  - Cast magic spells to heal your friends and smite your enemies!
  - Play an MMO where you are your own avatar!
- 
- Go to http://terranquest.net/ to play the game and stuff.
+
+Go to http://terranquest.net/ to play the game and stuff.
