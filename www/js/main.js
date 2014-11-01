@@ -7,7 +7,7 @@
  * Contact: admin@apocalypselabs.net
  */
 
-var apiurl = "http://apis.terranquest.net/";
+var apiurl = "https://apis.terranquest.net/";
 
 var username = '';
 var password = '';

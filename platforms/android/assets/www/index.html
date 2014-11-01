@@ -12,11 +12,27 @@ Contact: admin@apocalypselabs.net
         <title>TerranQuest</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=no;"/>
+        <meta name="mobile-web-app-capable" content="yes" />
+        <link rel="shortcut icon" href="assets/img/icon.png" sizes="512x512"/>
+        <link rel="apple-touch-icon" href="assets/img/appletouchicon60x60.png">
+        <link rel="apple-touch-icon" sizes="76x76" href="assets/img/appletouchicon76x76.png">
+        <link rel="apple-touch-icon" sizes="120x120" href="assets/img/appletouchicon120x120.png">
+        <link rel="apple-touch-icon" sizes="152x152" href="assets/img/appletouchicon152x152.png">
+        <meta name="apple-mobile-web-app-capable" content="yes" />
         <link rel="stylesheet" href="css/bootstrap.min.css" />
         <link rel="stylesheet" href="css/font-awesome.min.css" />
         <link rel="stylesheet" href="css/styles.css" />
+        <link rel="stylesheet" href="css/toast.css" />
         <script src="js/jquery/jquery.js"></script>
         <script src="js/bootstrap.min.js"></script>
+        <script src="js/toast.js"></script>
+        <script src="js/konami.js"></script>
+        <script>
+            var debugging = new Konami(function () {
+                new Android_Toast({content: "Developer mode enabled!"});
+                $('#debugdata').css('display', 'default');
+            });
+        </script>    
     </head>
     <body style="padding-top: 70px;">
 
@@ -34,10 +50,8 @@ Contact: admin@apocalypselabs.net
                             <br/>We'd like to thank the following people and communities:
                         </p>
                         <ul class="list-group">
-                            <li class="list-group-item">Lorc from game-icons.net for the cool game icons</li>
-                            <li class="list-group-item">The users of StackOverflow for their bits of cool code</li>
-                            <li class="list-group-item">The Apache Cordova project, for their mobile app framework</li>
-                            <li class="list-group-item">Bootswatch, for their Cyborg theme</li>
+                            <li class="list-group-item">Lorc and contributers from game-icons.net</li>
+                            <li class="list-group-item">The users of StackOverflow</li>
                             <li class="list-group-item">You, for your support of this app!</li>
                         </ul>
                         <p>Application copyright &copy; 2014 Apocalypse Laboratories.  All rights (and wrongs) reserved.</p>
@@ -45,6 +59,31 @@ Contact: admin@apocalypselabs.net
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                     </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+
+        <div class="modal fade" id="loginModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Login</h4>
+                        <p><small>Log in with your Apocalypse Laboratories account.</small></p>
+                    </div>
+                    <form>
+                    <div class="modal-body">
+                        <div class="alert alert-danger" id="loginerrmsg" style="display: none;"><i class="fa fa-ban"></i> Login incorrect.</div>
+                        <label for="usernamebox">Username:</label>
+                        <input type="text" name="usernamebox" id="usernamebox" class="form-control" placeholder="Username" required="required" />
+                        <br />
+                        <label for="passwordbox">Password:</label>
+                        <input type="password" id="passwordbox" class="form-control" placeholder="Password" required="required" />
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-default pull-left" onclick="window.open('https://sso.apocalypselabs.net/login.php?action=signup&app=terranquestapp', '_system');">Signup</button>
+                        <button type="submit" class="btn btn-default pull-right" onclick="login(); return false;">Login</button>
+                    </div>
+                    </form>
                 </div><!-- /.modal-content -->
             </div><!-- /.modal-dialog -->
         </div><!-- /.modal -->
@@ -57,15 +96,15 @@ Contact: admin@apocalypselabs.net
                         <h4 class="modal-title">Equip Weapon</h4>
                     </div>
                     <div class="modal-body">
-                        <ul class="list-group" id="weaponlist"><li class="list-group-item"><i class="fa fa-spinner fa-spin"></i> <i>Loading...</i></li></ul>
+                        <ul class="list-group" id="weaponslist"><li class="list-group-item"><i class="fa fa-spinner fa-spin"></i> <i>Loading...</i></li></ul>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Equip</button>
+                        <button type="button" class="btn btn-default" onclick="equipItem('weapons')" data-dismiss="modal">Equip</button>
                     </div>
                 </div><!-- /.modal-content -->
             </div><!-- /.modal-dialog -->
         </div><!-- /.modal -->
-        
+
         <div class="modal fade" id="magicModal">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -77,29 +116,30 @@ Contact: admin@apocalypselabs.net
                         <ul class="list-group" id="magiclist"><li class="list-group-item"><i class="fa fa-spinner fa-spin"></i> <i>Loading...</i></li></ul>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Equip</button>
+                        <button type="button" class="btn btn-default" onclick="equipItem('magic')" data-dismiss="modal">Equip</button>
                     </div>
                 </div><!-- /.modal-content -->
             </div><!-- /.modal-dialog -->
         </div><!-- /.modal -->
-        
-        <div class="modal fade" id="armorModal">
+
+        <div class="modal fade" id="resModal">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                        <h4 class="modal-title">Equip Item</h4>
+                        <h4 class="modal-title">Crafting Resources</h4>
                     </div>
                     <div class="modal-body">
-                        <ul class="list-group" id="armorlist"><li class="list-group-item"><i class="fa fa-spinner fa-spin"></i> <i>Loading...</i></li></ul>
+                        <div class="alert alert-info"><i class="fa fa-info-circle"></i> You can only craft items on a workbench (computer).</div>
+                        <ul class="list-group" id="resourceslist"><li class="list-group-item"><i class="fa fa-spinner fa-spin"></i> <i>Loading...</i></li></ul>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Equip</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                     </div>
                 </div><!-- /.modal-content -->
             </div><!-- /.modal-dialog -->
         </div><!-- /.modal -->
-        
+
         <div class="modal fade" id="playersModal">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -117,6 +157,17 @@ Contact: admin@apocalypselabs.net
             </div><!-- /.modal-dialog -->
         </div><!-- /.modal -->
 
+        <div class="modal fade" id="deathModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-body" style="text-align: center;">
+                        <h1 style="color: red;">YOU ARE DEAD.</h1>
+                        <h2><i class="fa fa-spinner fa-spin"></i> Reviving...</h2>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+
         <div class="navbar navbar-inverse navbar-fixed-top" id="navbardiv">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-inverse-collapse">
@@ -128,17 +179,17 @@ Contact: admin@apocalypselabs.net
             </div>
             <div class="navbar-collapse collapse navbar-inverse-collapse">
                 <ul class="nav navbar-nav">
-                    <li><a href="#" data-toggle="modal" data-target="#playersModal">Players</a></li>
+                    <li><a href="#" data-toggle="modal" onclick="getPositions();" data-target="#playersModal">Players</a></li>
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Equip <b class="caret"></b></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Inventory <b class="caret"></b></a>
                         <ul class="dropdown-menu">
-                            <li class="dropdown-header" style="padding: 5px;">Select a slot to equip an item.</li>
+                            <li class="dropdown-header" style="padding: 5px;">Select a category:</li>
                             <li class="divider"></li>
                             <li style="padding: 5px; text-align: center;"><a href="#weapon" data-toggle="modal" data-target="#weaponModal" id="openweapon"><img class="itemicon" src="assets/ico/broadsword.svg" alt=""/> Weapon</a></li>
                             <li class="divider"></li>
                             <li style="padding: 5px; text-align: center;"><a href="#magic" data-toggle="modal" data-target="#magicModal" id="openmagic"><img class="itemicon" src="assets/ico/drink-me.svg" alt=""/> Magic</a></li>
                             <li class="divider"></li>
-                            <li style="padding: 5px; text-align: center;"><a href="#armor" data-toggle="modal" data-target="#armorModal" id="openarmor"><img class="itemicon" src="assets/ico/layered-armor.svg" alt=""/> Armor</a></li>
+                            <li style="padding: 5px; text-align: center;"><a href="#resources" data-toggle="modal" data-target="#resModal" id="openresources"><img class="itemicon" src="assets/ico/metal-bar.png" alt=""/> Resources</a></li>
                             <li class="divider"></li>
                         </ul>
                     </li>
@@ -147,7 +198,9 @@ Contact: admin@apocalypselabs.net
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">More <b class="caret"></b></a>
                         <ul class="dropdown-menu">
-                            <li><a href="#"></a></li>
+                            <li><a href="#" onclick="eraseCookie('username');
+                                    eraseCookie('password');
+                                    location.reload();">Logout</a></li>
                             <li><a href="#" data-toggle="modal" data-target="#creditsModal">Credits</a></li>
                         </ul>
                     </li>
@@ -168,7 +221,8 @@ Contact: admin@apocalypselabs.net
                         </div>
                     </div>
                 </div>
-                <div class="row">
+                <!-- Invisible until implemented on the server all the way -->
+                <div class="row" style="display: none;">
                     <div class="col-xs-2">
                         <label>Magic:</label>
                     </div>
@@ -192,13 +246,13 @@ Contact: admin@apocalypselabs.net
                         <label>Actions:</label>
                         <div class="row">
                             <div class="col-xs-4">
-                                <button id="attackbtn" class="btn btn-danger" style="width: 100%;">Attack</button>
+                                <button id="attackbtn" onclick="doaction('attack');" class="btn btn-danger" style="width: 100%;">Attack</button>
                             </div>
                             <div class="col-xs-4">
-                                <button id="magicbtn" class="btn btn-info" style="width: 100%;">Magic</button>
+                                <button id="magicbtn" onclick="doaction('magic');" class="btn btn-info" style="width: 100%;">Magic</button>
                             </div>
                             <div class="col-xs-4">
-                                <button id="blockbtn" class="btn btn-warning" style="width: 100%;">Block</button>
+                                <button id="blockbtn" onclick="doBlock();" class="btn btn-warning" style="width: 100%;">Block</button>
                             </div>
                         </div>
                     </div>
@@ -206,24 +260,16 @@ Contact: admin@apocalypselabs.net
             </div>
             <hr>
             <h6>Messages:</h6>
-            <ul class="list-group" id="scroller">
-                <li class="list-group-item">...</li>
-                <li class="list-group-item">...</li>
-                <li class="list-group-item">...</li>
-                <li class="list-group-item">...</li>
-                <li class="list-group-item">...</li>
-                <li class="list-group-item">...</li>
-                <li class="list-group-item">...</li>
-                <li class="list-group-item">...</li>
+            <ul class="list-group" id="messagelist">
+                <li class="list-group-item">Loading...</li>
             </ul>
+            <div id="debugdata" style="display: none;">
+                <h6>Debugging:</h6>
+                <div id="debugging">
+                </div>
+                <a onclick="window.setTimeout(killYou(), 1000);" class="btn btn-danger">Suicide Simulation</a>
+            </div>
         </div>
-        <!-- QR code stuff -->
-        <script type="text/javascript" src="js/qr/html5-qrcode.min.js"></script>
-        <script>
-            function startQR(slot) {
-                $('#reader').html5_qrcode(function (data) {alert(data);}, function (error) {}, function (videoError) {alert("Could not get camera: "+videoError);});
-            }
-            </script>
-            <script src="js/main.js"></script>
+        <script src="js/main.js"></script>
     </body>
 </html>

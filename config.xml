@@ -2,7 +2,7 @@
 <widget xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0" id="net.apocalypselabs.mobile.TerranQuest" version="1.0.0">
     <name>TerranQuest</name>
     <description>
-        Bridge the gap between reality and fantasy.  
+        Bridge the gap between gaming and reality.  
 		Real life is already like an MMO. TerranQuest just adds swords and magic.
     </description>
     <author email="admin@aplabs.us" href="https://apocalypselabs.net/">
@@ -10,4 +10,6 @@
     </author>
     <content src="index.html"/>
     <access origin="*"/>
+    <icon src="icon.png"/>
 </widget>
+

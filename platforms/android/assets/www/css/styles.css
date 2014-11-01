@@ -25,3 +25,9 @@ Contact: admin@apocalypselabs.net
     width: 100%;
     height: 100%;
 }
+
+.checklist-text {
+    height: 100%;
+    background: none;
+    color: #ddd;
+}
