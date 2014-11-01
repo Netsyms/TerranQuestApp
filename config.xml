@@ -1,15 +1,31 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
-<widget xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0" id="net.apocalypselabs.mobile.TerranQuest" version="1.0.0">
+<widget xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0" xmlns:cdv="http://cordova.apache.org/ns/1.0" id="net.apocalypselabs.mobile.TerranQuest" version="1.2.0">
     <name>TerranQuest</name>
     <description>
-        Bridge the gap between gaming and reality.  
-		Real life is already like an MMO. TerranQuest just adds swords and magic.
+        TerranQuest is an MMO that you play in real life. It has crafting and swords and magic (and easter eggs and hidden jokes, if you look hard enough).
+
+		You simply explore your neighborhood to play the game. As you move around, you will sometimes find items that can be used to craft weapons and brew magic. Some items are rare, others common. To turn these items into usable objects, you must craft them on the website from your computer. Your phone or tablet is too small to forge a sword on!
+
+		With TerranQuest, you can:
+		
+		- Battle with nearby players and gain strength by using your weapons!
+		
+		- Cast magic spells to heal your friends and smite your enemies!
+		
+		- Play an MMO where you are your own avatar!
     </description>
-    <author email="admin@aplabs.us" href="https://apocalypselabs.net/">
+    <author email="support@aplabs.us" href="https://apocalypselabs.net/">
         Apocalypse Laboratories
     </author>
     <content src="index.html"/>
     <access origin="*"/>
     <icon src="icon.png"/>
+	
+	<preference name="permissions" value="none"/>
+	<feature name="http://api.phonegap.com/1.0/geolocation"/>
+	<feature name="http://api.phonegap.com/1.0/network"/>
+	<feature name="http://api.phonegap.com/1.0/notification"/>
+	
+	<gap:plugin name="org.apache.cordova.inappbrowser"/>
 </widget>
 

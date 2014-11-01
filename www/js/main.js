@@ -325,8 +325,7 @@ function login() {
  */
 function showLogin() {
     $('#loginModal').modal({
-        backdrop: 'static',
-        keyboard: false
+        backdrop: 'static'
     });
     $('#loginModal').modal('show');
     $('#overlay').css('display', 'none');
