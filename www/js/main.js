@@ -90,7 +90,7 @@ function sendPosition(position) {
     $('#debugging').html("<p>Latitude: " + position.coords.latitude + "<br />Longitude: " + position.coords.longitude + "<br />Accuracy: " + position.coords.accuracy + "</p>");
     // Accuracy must be better than 10 meters (~33 feet).
     accuracy = position.coords.accuracy;
-    if (position.coords.accuracy < minAccu) {
+    if (position.coords.accuracy > minAccu) {
         myPos = position
         $('#targetbox').html("<option>Loading...</option>");
         $.get(
