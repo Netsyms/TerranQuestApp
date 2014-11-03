@@ -27,6 +27,9 @@ var dead = false;
 
 var myPos = null;
 
+// Minimum required accuracy
+var minAccu = 30;
+
 // Get health stats every 3 seconds.
 window.setInterval(getStats, 3000);
 
@@ -87,7 +90,7 @@ function sendPosition(position) {
     $('#debugging').html("<p>Latitude: " + position.coords.latitude + "<br />Longitude: " + position.coords.longitude + "<br />Accuracy: " + position.coords.accuracy + "</p>");
     // Accuracy must be better than 10 meters (~33 feet).
     accuracy = position.coords.accuracy;
-    if (position.coords.accuracy < 11) {
+    if (position.coords.accuracy < minAccu) {
         myPos = position
         $('#targetbox').html("<option>Loading...</option>");
         $.get(
@@ -416,7 +419,7 @@ function spamBox() {
  * Request the game server to get you some L00t.
  */
 function findItems() {
-    if (loggedIn() && accuracy < 50) {
+    if (loggedIn() && accuracy < minAccu) {
         $.get(
                 apiurl + "finditem.php",
                 {u: username}
@@ -434,7 +437,7 @@ function loggedIn() {
 }
 
 function doaction(action) {
-    if (loggedIn() && accuracy < 11) {
+    if (loggedIn() && accuracy < minAccu) {
         var target = $("#targetbox option:selected").text();
         var tool = "";
         if (action === 'attack') {
