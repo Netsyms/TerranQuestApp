@@ -275,7 +275,7 @@ function getStats() {
                     } else {
                         // Only bug user once
                         if (broken === false) {
-                            new Android_Toast({content: "Oh, snap!  Your data is a little messed up.  <br />You need to contact support to fix this.  <br />Email support@aplabs.us and we\'ll get right on it."});
+                            new Android_Toast({content: "Oh, snap!  Your data are a little messed up.  <br />You need to contact support to fix this.  <br />Email support@aplabs.us and we\'ll get right on it."});
                         }
                         broken = true;
                     }

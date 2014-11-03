@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
-<widget xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0" xmlns:cdv="http://cordova.apache.org/ns/1.0" id="net.apocalypselabs.mobile.TerranQuest" version="1.2.0">
+<widget xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0" xmlns:cdv="http://cordova.apache.org/ns/1.0" id="net.apocalypselabs.mobile.TerranQuest" version="1.2.4">
     <name>TerranQuest</name>
     <description>
         TerranQuest is an MMO that you play in real life. It has crafting and swords and magic (and easter eggs and hidden jokes, if you look hard enough).
@@ -22,6 +22,8 @@
     <icon src="icon.png"/>
 	
 	<preference name="permissions" value="none"/>
+	<preference name="android-minSdkVersion" value="11" />
+	<preference name="android-targetSdkVersion" value="21" />
 	<feature name="http://api.phonegap.com/1.0/geolocation"/>
 	<feature name="http://api.phonegap.com/1.0/network"/>
 	<feature name="http://api.phonegap.com/1.0/notification"/>
