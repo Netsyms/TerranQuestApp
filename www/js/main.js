@@ -88,9 +88,9 @@ function gpsError(error) {
 function sendPosition(position) {
     myPos = position;
     $('#debugging').html("<p>Latitude: " + position.coords.latitude + "<br />Longitude: " + position.coords.longitude + "<br />Accuracy: " + position.coords.accuracy + "</p>");
-    // Accuracy must be better than 10 meters (~33 feet).
+    // Accuracy should be better than 10 meters (~33 feet).
     accuracy = position.coords.accuracy;
-    if (position.coords.accuracy > minAccu) {
+    if (accuracy <= minAccu) {
         myPos = position
         $('#targetbox').html("<option>Loading...</option>");
         $.get(
@@ -98,7 +98,7 @@ function sendPosition(position) {
                 {u: username,
                     lat: position.coords.latitude,
                     long: position.coords.longitude,
-                    a: 'setstatus'});
+                    a: 'setstatus'}, getPositions);
     } else {
         var content = '<li class="list-group-item">Your location isn\'t accurate enough to play this game.</li>';
         content += '<li class="list-group-item">Your accuracy: ' + position.coords.accuracy + ' meters.</li>';
