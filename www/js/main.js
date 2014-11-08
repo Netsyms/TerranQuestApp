@@ -28,7 +28,7 @@ var dead = false;
 var myPos = null;
 
 // Minimum required accuracy
-var minAccu = 30;
+var minAccu = 10;
 
 // Get health stats every 3 seconds.
 window.setInterval(getStats, 3000);
