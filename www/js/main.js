@@ -464,6 +464,16 @@ function doBlock() {
     $.get(apiurl + "block.php", {u: username});
 }
 
+function getPushes() {
+    $.get(apiurl + "notification.php", {}, function (data) {
+        if (readCookie("lastpush") != data) {
+            $('#pushModal').modal('show');
+            $('#pushmsg').html(data);
+            createCookie("lastpush", data, 120);
+        }
+    });
+}
+
 
 // Start the app going.
 $(window).bind("load", function () {
@@ -482,4 +492,5 @@ $(window).bind("load", function () {
     window.setInterval(getPositions, 20000);
     window.setInterval(findItems, 10000);
     getStats();
+    setTimeout(getPushes, 5000);
 });
