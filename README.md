@@ -1,7 +1,7 @@
 TerranQuest
 ===========
 
-This repository is really, really old.  It is only here for historical reasons ([we started TerranQuest almost a year before Pokemon Go was announced](https://github.com/Netsyms/TerranQuestApp/tree/a92eb60e63da3fdda3fa3003fa3a3ed320759adb))
+This repository is really, really old.  It is only here for historical reasons (such as [we started TerranQuest almost a year before Pokemon Go was announced](https://github.com/Netsyms/TerranQuestApp/tree/a92eb60e63da3fdda3fa3003fa3a3ed320759adb))
 ----------
 
 TerranQuest is an MMO that you play in real life. It has crafting and swords and magic (and easter eggs and hidden jokes, if you look hard enough).
